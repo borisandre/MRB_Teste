@@ -26,7 +26,7 @@ st.set_page_config(
 dosadores = []
 
 # Adicionando o logotipo da empresa centralizado com colunas
-st.sidebar.image("Imagens/logoMomesso.png", width=255)
+st.sidebar.image("logoMomesso.png", width=255)
 
 # Inicializa 'menu' no session_state, se ainda não estiver definido
 if "menu" not in st.session_state:
