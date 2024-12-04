@@ -12,11 +12,8 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import numpy as np
-import plotly.io as pio
 import threading
 import os
-
-pio.kaleido.scope.default_plotlyjs = "https://cdn.plot.ly/plotly-latest.min.js"
 
 # Configuração inicial do app
 st.set_page_config(
