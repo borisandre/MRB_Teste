@@ -12,8 +12,12 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import numpy as np
-import threading
-import os
+from fpdf import FPDF
+
+# Função para salvar o gráfico como imagem
+def save_image(fig, file_name):
+    fig.write_image(file_name, format="png")
+
 
 # Configuração inicial do app
 st.set_page_config(
@@ -509,46 +513,40 @@ elif st.session_state["menu"] == "Consumo":
                 </p>
             """, unsafe_allow_html=True)
         
-        
-        
-        
-        # Caminho absoluto para onde salvar a imagem
-        output_dir = r"D:\desenvolvimento\momessorepbuilder_app\momessorepbuilder_app\.spyproject"
-        
-        
-        output_path = os.path.join(output_dir, "teste.txt")
-        # Testar a permissão de gravação
-        try:
-            with open(output_path, 'w') as f:
-                f.write("Testando o caminho de salvamento")
-            print(f"Arquivo salvo com sucesso em: {output_path}")
-        except Exception as e:
-            print(f"Erro ao salvar arquivo: {e}")
-        
-        fig = px.bar(x=["A"], y=[1])
+        # Função para criar o PDF com o gráfico
+        def create_pdf(image_file, pdf_file):
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            pdf.cell(200, 10, txt="Relatório de Gráficos", ln=True, align='C')
 
         
-        output_path = os.path.join(output_dir, "grafico_pizza.png")
-        if not os.path.exists(output_dir):
-            print(f"Diretório não encontrado: {output_dir}")
-        else:
-            print(f"Salvando a imagem em: {output_path}")
-        
-        def save_image(fig):
-            print("Geradando imagem.")
-            fig.write_image("grafico_pizza.png", format="png")
-            print("Imagem 1 gerada com sucesso!")
-            fig.write_image(output_path)
-            print("Imagem 2 gerada com sucesso!")
-                
-        
-        # Executar o salvamento da imagem em uma thread separada
-        thread = threading.Thread(target=save_image, args=(fig,))
-        thread.start()
-        st.plotly_chart(fig, use_container_width=True)
-        
-        
-        
+            # Adicionar a imagem ao PDF
+            pdf.image(image_file, x=10, y=30, w=180)  # Ajuste as dimensões conforme necessário
+            pdf.output(pdf_file)
+            print(f"PDF {pdf_file} criado com sucesso!")
+
+        # Botão para exportar gráfico em PDF
+        if st.button("Exportar Gráfico em PDF"):
+            image_file = "grafico_pizza.png"
+            pdf_file = "relatorio_grafico.pdf"
+            
+            # Salvar gráfico como imagem
+            save_image(fig, image_file)
+            
+            # Criar o PDF
+            create_pdf(image_file, pdf_file)
+            
+            # Oferecer download no Streamlit
+            with open(pdf_file, "rb") as f:
+                st.download_button(
+                    label="Baixar PDF",
+                    data=f,
+                    file_name=pdf_file,
+                    mime="application/pdf"
+                )
+
+
         # def criar_grafico_matplotlib(df):
         #     fig, ax = plt.subplots(figsize=(8, 6))
         #     df = df.sort_values(by="Consumo", ascending=True)
@@ -634,7 +632,6 @@ elif st.session_state["menu"] == "Período":
             
             # Seletores para data/hora inicial e final
             col1, col2 = st.columns(2)
-            st.dataframe(df['hora_fim'])
             with col1:
                 # Selecionando data e hora para o Período Inicial
                 periodo_inicio_date = st.date_input("Data Inicial", df['hora_ini'].min().date())
