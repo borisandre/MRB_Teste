@@ -18,7 +18,7 @@ import os
 # Configuração inicial do app
 st.set_page_config(
     page_title="MOMESSO Report Builder",
-    page_icon="Imagens/iconeMomesso.png",
+    page_icon="iconeMomesso.png",
     layout="wide"
 )
 
