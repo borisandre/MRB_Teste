@@ -6,3 +6,4 @@ matplotlib
 numpy
 kaleido
 openpyxl
+fpdf
